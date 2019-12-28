@@ -7,5 +7,9 @@ namespace castle
 {
     public class South:Directions
     {
+        public override Room goStep(Room currRoom)
+        {
+            return currRoom.southExit;
+        }
     }
 }

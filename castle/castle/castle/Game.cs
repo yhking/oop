@@ -14,6 +14,13 @@ namespace castle
             createRooms();
         }
 
+        public Room CurrentRoom
+        {
+            get { return currentRoom; }
+            set { currentRoom = value; }
+        }
+
+
         private void createRooms()
         {
             Room outside, lobby, pub, study, bedroom;
@@ -61,47 +68,57 @@ namespace castle
         {
             Console.Write("迷路了吗？你可以做的命令有：go bye help");
             Console.WriteLine("如：\tgo east");
-        }       
+        }
 
-        public void goRoom(String direction) 
+        
+
+        public void goRoom(String direction)
         {
-            Room nextRoom = null;
-            if(direction == ("north")) {
-                nextRoom = currentRoom.northExit;
+            var nextRoom = CurrentRoom.goStep(direction);
+            if (nextRoom == null)
+            {
+                Console.WriteLine("这里没有门！");
             }
-            if(direction == ("east")) {
-                nextRoom = currentRoom.eastExit;
-            }
-            if(direction == ("south")) {
-                nextRoom = currentRoom.southExit;
-            }
-            if(direction == ("west")) {
-                nextRoom = currentRoom.westExit;
-            }
-
-            if (nextRoom == null) {
-                Console.WriteLine("那里没有门！");
-            }
-            else {
-                currentRoom = nextRoom;
-                Console.WriteLine("你在" + currentRoom);
-                Console.Write("出口有: ");
-                if(currentRoom.northExit != null)
-                    Console.Write("north ");
-                if(currentRoom.eastExit != null)
-                    Console.Write("east ");
-                if(currentRoom.southExit != null)
-                    Console.Write("south ");
-                if(currentRoom.westExit != null)
-                    Console.Write("west ");
-                Console.WriteLine();
+            else
+            {
+                CurrentRoom = nextRoom;
+                CurrentRoom.showHits();
             }
         }
 
-        public void goRoom(Directions direction)
-        {
-            
-        }
+        //public void goRoom(String direction) 
+        //{
+        //    Room nextRoom = null;
+        //    if(direction == ("north")) {
+        //        nextRoom = currentRoom.northExit;
+        //    }
+        //    if(direction == ("east")) {
+        //        nextRoom = currentRoom.eastExit;
+        //    }
+        //    if(direction == ("south")) {
+        //        nextRoom = currentRoom.southExit;
+        //    }
+        //    if(direction == ("west")) {
+        //        nextRoom = currentRoom.westExit;
+        //    }
 
+        //    if (nextRoom == null) {
+        //        Console.WriteLine("那里没有门！");
+        //    }
+        //    else {
+        //        currentRoom = nextRoom;
+        //        Console.WriteLine("你在" + currentRoom);
+        //        Console.Write("出口有: ");
+        //        if(currentRoom.northExit != null)
+        //            Console.Write("north ");
+        //        if(currentRoom.eastExit != null)
+        //            Console.Write("east ");
+        //        if(currentRoom.southExit != null)
+        //            Console.Write("south ");
+        //        if(currentRoom.westExit != null)
+        //            Console.Write("west ");
+        //        Console.WriteLine();
+        //    }
+        //}
     }
 }

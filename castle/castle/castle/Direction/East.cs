@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace castle.Direction
+namespace castle
 {
-    public class East:Directions
+    public class East : Directions
     {
-
+        public override Room goStep(Room currRoom)
+        {
+            return currRoom.eastExit;
+        }
     }
 }

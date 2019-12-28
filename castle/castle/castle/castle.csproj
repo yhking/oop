@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Direction\Direction.cs" />
+    <Compile Include="Direction\DirectionsFactory.cs" />
     <Compile Include="Direction\East.cs" />
     <Compile Include="Direction\North.cs" />
     <Compile Include="Direction\West.cs" />
