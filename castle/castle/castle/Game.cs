@@ -8,18 +8,16 @@ namespace castle
     public class Game
     {
         private Room currentRoom;
+        public Dictionary<String, Handler> handlers;
 
         public Game()
         {
             createRooms();
+            handlers = new Dictionary<string, Handler>();
+            handlers.Add("bye", new ByeHandler(this));
+            handlers.Add("help", new HelpHandler(this));
+            handlers.Add("go", new GoStepHandler(this));
         }
-
-        public Room CurrentRoom
-        {
-            get { return currentRoom; }
-            set { currentRoom = value; }
-        }
-
 
         private void createRooms()
         {
@@ -33,11 +31,16 @@ namespace castle
             bedroom = new Room("卧室");
 
             //	初始化房间的出口
-            outside.setExits(null, lobby, study, pub);
-            lobby.setExits(null, null, null, outside);
-            pub.setExits(null, outside, null, null);
-            study.setExits(outside, bedroom, null, null);
-            bedroom.setExits(null, null, null, study);
+            outside.setExit("east", lobby);
+            outside.setExit("south", study);
+            outside.setExit("west", pub);
+            lobby.setExit("west", outside);
+            pub.setExit("east", outside);
+            study.setExit("north", outside);
+            study.setExit("east", bedroom);
+            bedroom.setExit("west", study);
+            lobby.setExit("up", bedroom);
+            bedroom.setExit("down", lobby);
 
             currentRoom = outside;  //	从城堡门外开始
         }
@@ -49,76 +52,58 @@ namespace castle
             Console.WriteLine("这是一个超级无聊的游戏。");
             Console.WriteLine("如果需要帮助，请输入 'help' 。");
             Console.WriteLine();
-            Console.WriteLine("现在你在" + currentRoom);
-            Console.Write("出口有：");
-            if(currentRoom.northExit != null)
-                Console.Write("north ");
-            if(currentRoom.eastExit != null)
-                Console.Write("east ");
-            if(currentRoom.southExit != null)
-                Console.Write("south ");
-            if(currentRoom.westExit != null)
-                Console.Write("west ");
-            Console.WriteLine();
+            ShowLocation();
         }
 
         // 以下为用户命令
-
-        public void printHelp() 
+        public void Play()
         {
-            Console.Write("迷路了吗？你可以做的命令有：go bye help");
-            Console.WriteLine("如：\tgo east");
+            printWelcome();
+
+            while (true)
+            {
+
+                String line = Console.ReadLine();
+                String[] words = line.Split(' ');
+
+                Handler handler = null;
+                String value = (words.Length > 1) ? words[1] : "";
+
+                if (handlers.ContainsKey(words[0]))
+                {
+                    handler = handlers[words[0]];
+                    handler.DoCmd(value);
+                    if (handler.IsByeCmd())
+                    {
+                        break;
+                    }
+                }
+
+            }
+            
         }
 
-        
 
         public void goRoom(String direction)
         {
-            var nextRoom = CurrentRoom.goStep(direction);
+            var nextRoom = currentRoom.goStep(direction);
             if (nextRoom == null)
             {
                 Console.WriteLine("这里没有门！");
             }
             else
             {
-                CurrentRoom = nextRoom;
-                CurrentRoom.showHits();
+                currentRoom = nextRoom;
+                ShowLocation();
             }
         }
 
-        //public void goRoom(String direction) 
-        //{
-        //    Room nextRoom = null;
-        //    if(direction == ("north")) {
-        //        nextRoom = currentRoom.northExit;
-        //    }
-        //    if(direction == ("east")) {
-        //        nextRoom = currentRoom.eastExit;
-        //    }
-        //    if(direction == ("south")) {
-        //        nextRoom = currentRoom.southExit;
-        //    }
-        //    if(direction == ("west")) {
-        //        nextRoom = currentRoom.westExit;
-        //    }
-
-        //    if (nextRoom == null) {
-        //        Console.WriteLine("那里没有门！");
-        //    }
-        //    else {
-        //        currentRoom = nextRoom;
-        //        Console.WriteLine("你在" + currentRoom);
-        //        Console.Write("出口有: ");
-        //        if(currentRoom.northExit != null)
-        //            Console.Write("north ");
-        //        if(currentRoom.eastExit != null)
-        //            Console.Write("east ");
-        //        if(currentRoom.southExit != null)
-        //            Console.Write("south ");
-        //        if(currentRoom.westExit != null)
-        //            Console.Write("west ");
-        //        Console.WriteLine();
-        //    }
-        //}
+        private void ShowLocation()
+        {
+            
+            Console.WriteLine("现在你在" + currentRoom);
+            Console.Write("出口有：");
+            Console.WriteLine(currentRoom.showPrompt());
+        }
     }
 }

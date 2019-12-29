@@ -7,53 +7,41 @@ namespace castle
 {
     public class Room
     {
-        public String description;
-        public Room northExit;
-        public Room southExit;
-        public Room eastExit;
-        public Room westExit;
+        private String description;
+        private Dictionary<String, Room> exits = new Dictionary<string, Room>();
 
         public Room(String description) 
         {
             this.description = description;
         }
 
-        public void showHits()
+        public string showPrompt()
         {
-            Console.WriteLine("你在" + this);
-            Console.Write("出口有: ");
-            if (this.northExit != null)
-                Console.Write("north ");
-            if (this.eastExit != null)
-                Console.Write("east ");
-            if (this.southExit != null)
-                Console.Write("south ");
-            if (this.westExit != null)
-                Console.Write("west ");
-            Console.WriteLine();
+            StringBuilder sb = new StringBuilder();
+
+            foreach(String dir in exits.Keys)
+            {
+                sb.Append(dir);
+                sb.Append(" ");
+            }
+
+            return sb.ToString();
         }
 
         
-        public Room goStep(String direction)
+        public Room goStep(String dir)
         {
-            var dir = DirectionsFactory.createDirections(direction);
+            if (exits.ContainsKey(dir))
+            {
+                return exits[dir];
+            }
 
-            if (dir == null)
-                return null;
-
-            return dir.goStep(this);
+            return null;
         }
 
-        public void setExits(Room north, Room east, Room south, Room west) 
+        public void setExit(String dir, Room room)
         {
-            if(north != null)
-                northExit = north;
-            if(east != null)
-                eastExit = east;
-            if(south != null)
-                southExit = south;
-            if(west != null)
-                westExit = west;
+            exits.Add(dir, room);
         }
 
         public override String ToString()
